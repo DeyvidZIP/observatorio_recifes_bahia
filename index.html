@@ -1,0 +1,1725 @@
+<title>Observatório Térmico dos Recifes da Bahia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ===== Leaflet 1.9.4 (CSS embutido) ===== */
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+
+/* ===== Observatório: mapa em tela cheia (estilo Windy), controles flutuantes, linha do tempo na base ===== */
+:root {
+  --mar: #0a1820;
+  --terra: #18252a;
+  --terra-borda: #4f6469;
+  --painel: rgba(9, 19, 25, 0.9);
+  --painel-solido: #0d1d26;
+  --linha: rgba(150, 185, 195, 0.18);
+  --texto: #e4edef;
+  --texto-2: #95aab0;
+  --acento: #ff8a3d;
+  --recife: #ff4fd8;
+  --foco: #ffd166;
+  --f-titulo: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-dados: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --raio: 10px;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; overflow: hidden;
+  background: var(--mar); color: var(--texto);
+  font-family: var(--f-titulo); font-size: 14px;
+}
+#mapa { position: absolute; inset: 0; background: var(--mar); }
+.leaflet-container { background: var(--mar); font-family: var(--f-titulo); }
+.leaflet-control-attribution {
+  background: rgba(9, 19, 25, 0.7) !important; color: var(--texto-2) !important; font-size: 10px;
+}
+.leaflet-control-attribution a { color: var(--texto-2) !important; }
+.leaflet-bar a { background: var(--painel-solido); color: var(--texto); border-bottom-color: var(--linha); }
+.leaflet-bar a:hover { background: #17303c; color: var(--texto); }
+.leaflet-bar { border: 1px solid var(--linha) !important; }
+.raster { image-rendering: pixelated; }
+.leaflet-bottom.leaflet-right .leaflet-control-zoom { margin-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); margin-right: max(16px, env(safe-area-inset-right, 0px)); }
+.raster.suave { image-rendering: auto; }
+
+/* painéis flutuantes */
+.flutuante {
+  position: absolute; z-index: 1000;
+  background: var(--painel); backdrop-filter: blur(6px);
+  border: 1px solid var(--linha); border-radius: var(--raio);
+}
+.topo {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  left: max(16px, env(safe-area-inset-left, 0px));
+  width: min(340px, calc(100vw - 32px));
+  padding: 14px 14px 12px; display: grid; gap: 10px;
+}
+.topo { max-height: calc(100% - 200px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); overflow: auto; }
+.topo-cab { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.topo-corpo { display: grid; gap: 10px; }
+.recolher {
+  display: none; appearance: none; cursor: pointer; font: inherit; font-size: 12px; font-weight: 600;
+  color: var(--texto); background: transparent; border: 1px solid var(--linha); border-radius: 8px; padding: 7px 10px; flex: none;
+}
+.recolher::after { content: " ▾"; }
+.recolher[aria-expanded="true"]::after { content: " ▴"; }
+.nav-recifes { display: flex; align-items: center; gap: 6px; }
+.nav-recifes .seta {
+  appearance: none; cursor: pointer; width: 34px; height: 30px; flex: none; border-radius: 8px;
+  border: 1px solid var(--linha); background: transparent; color: var(--texto); font-size: 18px; line-height: 1;
+}
+.nav-recifes .seta:hover { border-color: var(--texto-2); }
+.menu-recifes {
+  flex: 1; min-width: 0; appearance: none; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600;
+  color: var(--texto); background: transparent; border: 1px solid var(--linha); border-radius: 8px;
+  height: 30px; padding: 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;
+}
+.menu-recifes::after { content: "▾"; float: right; margin-left: 6px; color: var(--texto-2); }
+.menu-recifes[aria-expanded="true"] { border-color: var(--acento); }
+.menu-recifes[aria-expanded="true"]::after { content: "▴"; }
+.lista-recifes {
+  margin-top: 8px; max-height: min(44vh, 340px); overflow: auto; overscroll-behavior: contain;
+  border: 1px solid var(--linha); border-radius: 8px; padding: 2px 4px 6px;
+}
+.lista-recifes .grupo {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-2);
+  padding: 10px 8px 4px; position: sticky; top: 0; background: var(--painel-solido);
+}
+.item-recife {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%;
+  appearance: none; cursor: pointer; font: inherit; text-align: left; color: var(--texto);
+  background: transparent; border: 0; border-radius: 6px; padding: 7px 8px;
+}
+.item-recife:hover { background: rgba(150, 185, 195, 0.1); }
+.item-recife[aria-selected="true"] { background: rgba(255, 138, 61, 0.16); }
+.item-recife .n { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item-recife .n small { color: var(--texto-2); font-size: 11px; margin-left: 4px; }
+.item-recife .v { display: flex; gap: 4px; }
+.item-recife .v span {
+  font-family: var(--f-dados); font-size: 10.5px; font-variant-numeric: tabular-nums;
+  padding: 2px 5px; border-radius: 4px; color: #0a1820; min-width: 40px; text-align: center; box-sizing: border-box;
+}
+.lista-legenda { font-size: 10.5px; color: var(--texto-2); padding: 8px 8px 0; line-height: 1.45; }
+.lista-cab {
+  display: flex; justify-content: space-between; align-items: end; gap: 8px; padding: 8px 8px 2px;
+  font-size: 10.5px; color: var(--texto-2);
+}
+.cab-anos { display: flex; gap: 4px; align-items: end; white-space: nowrap; }
+.cab-anos b { font-family: var(--f-dados); font-weight: 500; min-width: 40px; text-align: center; color: var(--texto); }
+.nav-pos { flex: 1; text-align: center; font-family: var(--f-dados); font-size: 12px; color: var(--texto-2); }
+.marca h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: 0.01em; text-wrap: balance; }
+.marca p { margin: 3px 0 0; color: var(--texto-2); font-size: 12px; line-height: 1.35; }
+.rotulo {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--texto-2); margin-bottom: 5px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  appearance: none; cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600;
+  color: var(--texto); background: transparent; border: 1px solid var(--linha);
+  border-radius: 999px; padding: 6px 11px; line-height: 1;
+}
+.chip:hover { border-color: var(--texto-2); }
+.chip[aria-pressed="true"] { background: var(--texto); color: #0a1820; border-color: var(--texto); }
+.chip:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+.chip.sub { font-weight: 500; font-size: 12px; padding: 5px 10px; }
+.chip .ponto { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
+.linha-acoes { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.link-sobre {
+  appearance: none; background: none; border: 0; color: var(--texto-2); font: inherit; font-size: 12px;
+  cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0;
+}
+
+/* botão do painel de área */
+.btn-area {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  appearance: none; cursor: pointer; font: inherit; font-weight: 600; font-size: 12.5px;
+  color: var(--texto); padding: 9px 12px;
+}
+.btn-area[aria-expanded="true"] { border-color: var(--acento); }
+
+/* painel de área em alerta */
+.area {
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  width: min(380px, calc(100vw - 32px)); padding: 12px 14px; display: grid; gap: 8px;
+}
+.area h2, .detalhe h2 { margin: 0; font-size: 14px; font-weight: 700; }
+.area .sub, .detalhe .sub { color: var(--texto-2); font-size: 12px; margin-top: 2px; }
+.caixa-grafico { position: relative; height: 170px; }
+
+/* painel de detalhe (pixel ou recife) */
+.detalhe {
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  width: min(400px, calc(100vw - 32px)); padding: 14px; overflow: auto;
+  display: grid; gap: 12px; align-content: start;
+}
+.detalhe-topo { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.fechar {
+  appearance: none; background: none; border: 1px solid var(--linha); color: var(--texto);
+  border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: 16px; line-height: 1; flex: none;
+}
+.valores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.valor { border: 1px solid var(--linha); border-radius: 8px; padding: 7px 8px; min-width: 0; }
+.valor .r { font-size: 10px; color: var(--texto-2); text-transform: uppercase; letter-spacing: 0.07em; }
+.valor .v { font-family: var(--f-dados); font-size: 15px; font-weight: 500; margin-top: 3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.valor .u { font-size: 10px; color: var(--texto-2); }
+.selo { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 5px; color: #0a1820; }
+.nota { color: var(--texto-2); font-size: 11.5px; line-height: 1.45; margin: 0; }
+.caixa-grafico.alta { height: 210px; }
+.caixa-grafico.barras { height: 130px; }
+
+/* legenda */
+.legenda {
+  left: max(16px, env(safe-area-inset-left, 0px));
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  padding: 9px 11px; max-width: min(340px, calc(100vw - 32px));
+}
+.legenda .titulo { font-size: 11px; color: var(--texto-2); margin-bottom: 6px; }
+.escala { display: flex; height: 10px; border-radius: 3px; overflow: hidden; }
+.escala span { flex: 1; }
+.escala-rotulos { display: flex; justify-content: space-between; font-family: var(--f-dados); font-size: 10px; color: var(--texto-2); margin-top: 4px; }
+.categorias { display: grid; gap: 4px; }
+.categorias div { display: flex; align-items: center; gap: 7px; font-size: 11.5px; }
+.categorias i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+
+/* linha do tempo */
+.tempo {
+  left: max(16px, env(safe-area-inset-left, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  padding: 10px 14px; display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 14px; align-items: center;
+}
+.play {
+  appearance: none; cursor: pointer; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--acento); color: #1a0d03; border: 0; font-size: 15px; font-weight: 700;
+  display: grid; place-items: center;
+}
+.data { min-width: 0; }
+.data .d { font-family: var(--f-dados); font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data .m { font-size: 11px; color: var(--texto-2); white-space: nowrap; }
+.trilho { position: relative; min-width: 0; padding-bottom: 14px; }
+#cursor { width: 100%; accent-color: var(--acento); margin: 0; }
+.anos { position: absolute; left: 0; right: 0; bottom: 0; height: 12px; font-family: var(--f-dados); font-size: 10px; color: var(--texto-2); }
+.anos span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+
+/* leitura sob o cursor */
+.leitura {
+  position: absolute; z-index: 1100; pointer-events: none;
+  background: var(--painel-solido); border: 1px solid var(--linha); border-radius: 6px;
+  padding: 4px 7px; font-family: var(--f-dados); font-size: 12px; white-space: nowrap;
+  transform: translate(12px, -50%);
+}
+
+/* rótulos de cidades e setores */
+.cidade { color: var(--texto-2); font-size: 11px; white-space: nowrap; text-shadow: 0 0 3px #000; }
+.cidade::before { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--texto-2); margin-right: 5px; vertical-align: 2px; }
+.setor { color: var(--texto); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; opacity: 0.75; }
+
+/* carregamento e sobre */
+.aviso {
+  position: absolute; inset: 0; z-index: 2000; display: grid; place-items: center;
+  background: var(--mar); color: var(--texto-2); font-size: 14px; padding: 24px; text-align: center;
+}
+.sobre-fundo { position: absolute; inset: 0; z-index: 2500; background: rgba(0, 0, 0, 0.55); display: grid; place-items: center; padding: 16px; }
+.sobre {
+  position: relative; max-width: 620px; max-height: calc(100% - 32px); overflow: auto;
+  background: var(--painel-solido); border: 1px solid var(--linha); border-radius: var(--raio); padding: 20px 22px;
+}
+.sobre h2 { margin: 0 0 10px; font-size: 18px; }
+.sobre h3 { margin: 16px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-2); }
+.sobre p, .sobre li { line-height: 1.55; font-size: 13.5px; max-width: 65ch; }
+.sobre ul { padding-left: 18px; margin: 0; }
+.sobre a { color: var(--foco); }
+.sobre .fechar { position: absolute; top: 14px; right: 14px; }
+
+/* tablet */
+@media (max-width: 1100px) and (min-width: 721px) {
+  .topo { width: 300px; }
+  .detalhe, .area { width: 350px; }
+}
+/* tela baixa (celular deitado) */
+@media (max-height: 560px) and (min-width: 721px) {
+  .marca p { display: none; }
+  body.painel-aberto .legenda { display: none; }
+  .caixa-grafico.alta { height: 160px; }
+  .caixa-grafico.barras { height: 100px; }
+}
+/* celular: barra recolhível no topo, painéis viram folhas na base */
+@media (max-width: 720px) {
+  .topo {
+    padding: 10px 12px; gap: 8px; width: auto;
+    right: max(16px, env(safe-area-inset-right, 0px));
+    max-height: calc(100% - 140px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  .recolher { display: inline-block; }
+  .topo.recolhido .topo-corpo { display: none; }
+  .marca h1 { font-size: 14.5px; }
+  .marca p { display: none; }
+  body.painel-aberto .legenda, body.painel-aberto .btn-area,
+  .topo:not(.recolhido) ~ .legenda, .topo:not(.recolhido) ~ .btn-area { display: none; }
+  .caixa-grafico.alta { height: 180px; }
+  .caixa-grafico.barras { height: 110px; }
+  .btn-area { top: auto; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .area, .detalhe {
+    top: auto; left: max(16px, env(safe-area-inset-left, 0px));
+    bottom: calc(134px + env(safe-area-inset-bottom, 0px)); width: auto; max-height: min(55vh, calc(100% - 214px)); overflow: auto;
+  }
+  .legenda { bottom: calc(134px + env(safe-area-inset-bottom, 0px)); max-width: calc(100vw - 160px); }
+  .btn-area { bottom: calc(134px + env(safe-area-inset-bottom, 0px)); }
+  .tempo { grid-template-columns: auto minmax(0, 1fr); }
+  .data { grid-column: 2; }
+  .trilho { grid-column: 1 / -1; }
+  .valores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .leaflet-control-zoom { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div id="mapa" aria-label="Mapa interativo do estresse térmico marinho na costa da Bahia"></div>
+
+<section class="flutuante topo" id="topo" aria-label="Camadas">
+  <div class="topo-cab">
+    <div class="marca">
+      <h1>Observatório Térmico dos Recifes da Bahia</h1>
+      <p>Estresse térmico marinho por satélite, NOAA Coral Reef Watch (5 km), 2023–2025 e histórico desde 1985</p>
+    </div>
+    <button class="recolher" id="recolher" aria-expanded="true" aria-controls="topo-corpo">Camadas</button>
+  </div>
+  <div class="topo-corpo" id="topo-corpo">
+  <div>
+    <div class="rotulo">Complexos recifais</div>
+    <div class="nav-recifes">
+      <button class="seta" id="rec-ant" aria-label="Recife anterior">‹</button>
+      <button class="menu-recifes" id="rec-nome" aria-expanded="false" aria-controls="lista-recifes">Escolher recife</button>
+      <button class="seta" id="rec-prox" aria-label="Próximo recife">›</button>
+    </div>
+    <div class="lista-recifes" id="lista-recifes" role="listbox" aria-label="Complexos recifais, de norte a sul" hidden></div>
+  </div>
+  <div>
+    <div class="rotulo">Variável</div>
+    <div class="chips" id="chips-var" role="group" aria-label="Variável exibida"></div>
+  </div>
+  <div>
+    <div class="rotulo">Período</div>
+    <div class="chips" role="group" aria-label="Modo de tempo">
+      <button class="chip sub" id="modo-semanal" aria-pressed="true">Semanal</button>
+      <button class="chip sub" id="modo-anual" aria-pressed="false">Máximo anual de DHW</button>
+    </div>
+  </div>
+  <div>
+    <div class="rotulo">Sobreposições</div>
+    <div class="chips" id="chips-sobre" role="group" aria-label="Sobreposições"></div>
+  </div>
+  <div class="linha-acoes">
+    <button class="chip sub" id="suavizar" aria-pressed="true">Suavizar pixels</button>
+    <button class="link-sobre" id="abrir-sobre">Sobre os dados</button>
+  </div>
+  </div>
+</section>
+
+<button class="flutuante btn-area" id="btn-area" aria-expanded="false" aria-controls="painel-area">Área em alerta</button>
+
+<section class="flutuante area" id="painel-area" hidden aria-label="Área da plataforma em alerta">
+  <div class="detalhe-topo">
+    <div>
+      <h2>Área da plataforma em alerta</h2>
+      <div class="sub">Faixa costeira de ~100 km da Bahia (82.550 km²), por setor</div>
+    </div>
+    <button class="fechar" id="fechar-area" aria-label="Fechar">×</button>
+  </div>
+  <div class="chips" role="group" aria-label="Limiar">
+    <button class="chip sub" data-limiar="4" aria-pressed="false">DHW ≥ 4 (Alerta 1)</button>
+    <button class="chip sub" data-limiar="8" aria-pressed="true">DHW ≥ 8 (Alerta 2)</button>
+  </div>
+  <div class="caixa-grafico"><canvas id="graf-area" aria-label="Gráfico da porcentagem da área em alerta"></canvas></div>
+</section>
+
+<section class="flutuante detalhe" id="painel-detalhe" hidden aria-live="polite" aria-label="Detalhe do ponto selecionado">
+  <div class="detalhe-topo">
+    <div>
+      <h2 id="det-titulo">Ponto</h2>
+      <div class="sub" id="det-sub"></div>
+    </div>
+    <button class="fechar" id="fechar-detalhe" aria-label="Fechar">×</button>
+  </div>
+  <div class="nav-recifes" id="det-nav" hidden>
+    <button class="seta" id="det-ant" aria-label="Recife anterior">‹</button>
+    <span class="nav-pos" id="det-pos"></span>
+    <button class="seta" id="det-prox" aria-label="Próximo recife">›</button>
+  </div>
+  <div class="valores" id="det-valores"></div>
+  <div>
+    <div class="rotulo" id="det-rotulo-serie">Série</div>
+    <div class="caixa-grafico alta"><canvas id="graf-serie"></canvas></div>
+  </div>
+  <div>
+    <div class="rotulo" id="det-rotulo-anual">DHW máximo por ano</div>
+    <div class="caixa-grafico barras"><canvas id="graf-anual"></canvas></div>
+  </div>
+  <p class="nota" id="det-nota"></p>
+</section>
+
+<section class="flutuante legenda" id="legenda" aria-label="Legenda"></section>
+
+<section class="flutuante tempo" aria-label="Linha do tempo">
+  <button class="play" id="play" aria-label="Animar">▶</button>
+  <div class="data"><div class="d" id="data-d">—</div><div class="m" id="data-m"></div></div>
+  <div class="trilho">
+    <input type="range" id="cursor" min="0" max="0" value="0" step="1" aria-label="Data exibida">
+    <div class="anos" id="anos"></div>
+  </div>
+</section>
+
+<div class="leitura" id="leitura" hidden></div>
+<div class="aviso" id="aviso">Carregando dados do Coral Reef Watch…</div>
+
+<div class="sobre-fundo" id="sobre" hidden>
+  <div class="sobre" role="dialog" aria-modal="true" aria-labelledby="sobre-titulo">
+    <button class="fechar" id="fechar-sobre" aria-label="Fechar">×</button>
+    <h2 id="sobre-titulo">Sobre os dados</h2>
+    <p>Este observatório mostra o estresse térmico marinho sobre a plataforma continental da Bahia durante o quarto evento global de branqueamento de corais, a partir dos produtos diários de 5 km do NOAA Coral Reef Watch, versão 3.1.</p>
+    <h3>Autoria</h3>
+    <p>Deyvid Reis Santos e Gil Marcelo Reus Strenzel, Universidade Estadual de Santa Cruz (UESC), Ilhéus, BA.</p>
+    <h3>Como citar</h3>
+    <p>SANTOS, D. R.; STRENZEL, G. M. R. Estresse térmico marinho consecutivo nos recifes de coral da Bahia durante o quarto evento global de branqueamento: análise orbital de 1985 a 2025. Trabalho submetido ao XXII Simpósio Brasileiro de Sensoriamento Remoto (SBSR).</p>
+    <h3>Variáveis</h3>
+    <ul>
+      <li><strong>DHW</strong> (Degree Heating Week): soma dos HotSpots ≥ 1 °C nas últimas 12 semanas, em °C-semana. Desde dezembro de 2023 a NOAA usa cinco níveis de alerta: Alerta 1 (DHW ≥ 4, risco de branqueamento generalizado), Alerta 2 (≥ 8, branqueamento com mortalidade de corais sensíveis), Alerta 3 (≥ 12, risco de mortalidade de várias espécies), Alerta 4 (≥ 16, mortalidade de mais de 50% dos corais) e Alerta 5 (≥ 20, mortalidade de mais de 80%). Os alertas indicam risco calculado a partir da temperatura, não branqueamento observado em campo.</li>
+      <li><strong>Nível de alerta</strong>: classificação da CRW (Observação, Aviso e Alertas 1 a 5). O ERDDAP fornece até o Alerta 2; os Alertas 3 a 5 são calculados aqui a partir do DHW, pela mesma regra da NOAA. O nível é o do dia mostrado: se o HotSpot do dia fica abaixo de 1 °C, o alerta cai para Observação mesmo com DHW alto, por isso o mapa de DHW é o melhor para ver o acúmulo de estresse.</li>
+      <li><strong>SSTA</strong>: anomalia da temperatura da superfície do mar em relação à climatologia da CRW.</li>
+      <li><strong>SST</strong>: temperatura da superfície do mar (CoralTemp).</li>
+    </ul>
+    <h3>Como ler</h3>
+    <ul>
+      <li>Em "Complexos recifais", o menu lista os 15 complexos por região, com o DHW máximo de cada ano; as setas ‹ › (ou as teclas [ e ]) percorrem os recifes de norte a sul. Coordenadas marcadas com ≈ são aproximadas.</li>
+      <li>A linha do tempo mostra um quadro por semana. O clique no mar abre a série daquele pixel de 5 km; o clique num recife abre a série diária.</li>
+      <li>Cada pixel representa ~5,5 km × 5,5 km. Baías e a faixa colada à costa podem misturar água e terra.</li>
+      <li>Setores usados na análise: Norte (11,45–13,5° S), Centro (13,5–16,0° S) e Sul (16,0–18,35° S), entre os limites da Bahia.</li>
+      <li>No modo "Máximo anual de DHW", a linha do tempo percorre 1985 a 2025 (1985 começa em abril).</li>
+    </ul>
+    <h3>Fontes</h3>
+    <ul>
+      <li>NOAA Coral Reef Watch, CoralTemp e produtos de estresse térmico v3.1 (Skirving et al., 2020), via ERDDAP NOAA CoastWatch; níveis de alerta revisados pela NOAA CRW em dezembro de 2023.</li>
+      <li>Recifes: Allen Coral Atlas v2.0 (Allen Coral Atlas, 2020). Na Bahia, o atlas mapeia apenas parte dos recifes do sul (Cabrália a Abrolhos); os do norte, em águas mais turvas, e recifes conhecidos como Itacolomis e Timbebas não aparecem.</li>
+      <li>Complexos recifais: coordenadas de Kelmo &amp; Attrill (2013), Leão et al. (2008), Cruz et al. (2008), Decreto 88.218/1983 (PARNA Marinho dos Abrolhos) e polígonos do Allen Coral Atlas; as aproximadas estão marcadas com ≈.</li>
+      <li>Linha de costa: máscara de terra de Hansen et al. (30 m), vetorizada a 100 m no Google Earth Engine. Fora da área de dados: Natural Earth, 1:10 milhões.</li>
+    </ul>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — a maior parte das mudanças se faz aqui
+   ===================================================================== */
+const CONFIG = {
+  pastaDados: "data/",
+  varInicial: "dhw",
+  quadroInicial: "2024-05-19",          // data aberta ao carregar (a mais próxima)
+  intervaloAnimacaoMs: 220,
+
+  variaveis: {
+    dhw: {
+      nome: "DHW", unidade: "°C-semana", casas: 1, tipo: "degraus",
+      limites: [0, 1, 2, 4, 8, 12, 16, 20],
+      cores: ["#173f4b", "#fee391", "#fec44f", "#fe9929", "#ec7014", "#cc4c02", "#a8320b", "#7a1f7a"],
+      legenda: "Degree Heating Week (°C-semana)"
+    },
+    baa: {
+      nome: "Alerta", unidade: "", casas: 0, tipo: "categorias",
+      categorias: [
+        { v: 0, nome: "Sem estresse", cor: "#2c6676" },
+        { v: 1, nome: "Observação", cor: "#fff000" },
+        { v: 2, nome: "Aviso", cor: "#faaa0a" },
+        { v: 3, nome: "Alerta 1 (DHW ≥ 4)", cor: "#f00000" },
+        { v: 4, nome: "Alerta 2 (DHW ≥ 8)", cor: "#960000" },
+        { v: 5, nome: "Alerta 3 (DHW ≥ 12)", cor: "#b4006e" },
+        { v: 6, nome: "Alerta 4 (DHW ≥ 16)", cor: "#7a1fa2" },
+        { v: 7, nome: "Alerta 5 (DHW ≥ 20)", cor: "#4527a0" }
+      ],
+      legenda: "Nível de alerta de branqueamento (NOAA CRW)"
+    },
+    ssta: {
+      nome: "SSTA", unidade: "°C", casas: 2, tipo: "continua",
+      paradas: [[-2, "#2166ac"], [-1, "#67a9cf"], [0, "#e9e7df"], [1, "#f4a582"], [2, "#d6604d"], [3, "#8b0a1f"]],
+      legenda: "Anomalia da temperatura da superfície do mar (°C)"
+    },
+    sst: {
+      nome: "SST", unidade: "°C", casas: 2, tipo: "continua",
+      paradas: [[23, "#2b3a8c"], [25, "#2f7fc1"], [26.5, "#35b7a2"], [27.5, "#c8d84a"], [28.5, "#f4a21c"], [29.5, "#e0442b"], [31, "#8f1037"]],
+      legenda: "Temperatura da superfície do mar (°C)"
+    }
+  },
+
+  setores: [
+    { nome: "Norte", latN: -11.45, latS: -13.5, cor: "#d95f02" },
+    { nome: "Centro", latN: -13.5, latS: -16.0, cor: "#7570b3" },
+    { nome: "Sul", latN: -16.0, latS: -18.35, cor: "#1b9e77" }
+  ],
+
+  cidades: [
+    { nome: "Salvador", lat: -12.97, lon: -38.51 },
+    { nome: "Valença", lat: -13.37, lon: -39.07 },
+    { nome: "Ilhéus", lat: -14.79, lon: -39.05 },
+    { nome: "Porto Seguro", lat: -16.45, lon: -39.07 },
+    { nome: "Caravelas", lat: -17.73, lon: -39.27 }
+  ],
+
+  limiaresDHW: [4, 8, 12, 16, 20],
+  corRecife: "#ff4fd8",
+  corSitio: "#ffffff",
+  atribuicao: "NOAA Coral Reef Watch v3.1 · Allen Coral Atlas · Natural Earth"
+};
+
+/* =====================================================================
+   A partir daqui: funcionamento do mapa (mudanças raramente necessárias)
+   ===================================================================== */
+const estado = {
+  var: CONFIG.varInicial, modo: "semanal", quadro: 0, ano: 0, tocando: null,
+  selecao: null, limiarArea: 8, suave: true, sobre: { recifes: true, sitios: true, setores: true }
+};
+const D = {};
+const $ = (id) => document.getElementById(id);
+const fmt = (v, c) => (v == null || Number.isNaN(v)) ? "—" : v.toLocaleString("pt-BR", { minimumFractionDigits: c, maximumFractionDigits: c });
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const dataBR = (s) => { const [a, m, d] = s.split("-"); return `${+d} ${MESES[+m - 1]} ${a}`; };
+
+/* ---------- cores ---------- */
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function corDe(nome, v) {
+  const c = CONFIG.variaveis[nome];
+  if (c.tipo === "degraus") {
+    let i = 0; while (i + 1 < c.limites.length && v >= c.limites[i + 1]) i++;
+    return hexRgb(c.cores[i]);
+  }
+  if (c.tipo === "categorias") {
+    const k = c.categorias.find((x) => x.v === Math.round(v)); return hexRgb(k ? k.cor : "#000000");
+  }
+  const p = c.paradas;
+  if (v <= p[0][0]) return hexRgb(p[0][1]);
+  if (v >= p[p.length - 1][0]) return hexRgb(p[p.length - 1][1]);
+  for (let i = 0; i < p.length - 1; i++) {
+    if (v <= p[i + 1][0]) {
+      const t = (v - p[i][0]) / (p[i + 1][0] - p[i][0]), a = hexRgb(p[i][1]), b = hexRgb(p[i + 1][1]);
+      return a.map((x, j) => Math.round(x + (b[j] - x) * t));
+    }
+  }
+}
+function decod(nome, byte) {
+  if (byte === 255) return NaN;
+  const e = D.grade.codificacao[nome === "anual" ? "dhw" : nome];
+  return byte / e.esc + e.off;
+}
+/* Alertas 3 a 5 (NOAA CRW, dez. 2023): o ERDDAP entrega até o Alerta 2 (código 4);
+   acima disso o nível sai do DHW, pela mesma regra da NOAA (12, 16 e 20 °C-semana). */
+function nivelAlerta(baa, dhw) {
+  if (Number.isNaN(baa) || baa < 4 || Number.isNaN(dhw)) return baa;
+  return dhw >= 20 ? 7 : dhw >= 16 ? 6 : dhw >= 12 ? 5 : baa;
+}
+function valorFonte(f, k) {
+  const v = decod(f.cod, f.bytes[f.base + k]);
+  return f.nome === "baa" ? nivelAlerta(v, decod("dhw", D.dhw[f.base + k])) : v;
+}
+
+/* ---------- carregamento ---------- */
+async function bin(n) {
+  // quadros uint8 gravados como texto base64 (.txt)
+  const r = await fetch(CONFIG.pastaDados + n.replace(".bin", ".txt"), { cache: "no-cache" }); if (!r.ok) throw new Error(n);
+  const s = atob((await r.text()).trim()), u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  return u;
+}
+async function json(n, opcional) {
+  try { const r = await fetch(CONFIG.pastaDados + n, { cache: "no-cache" }); if (!r.ok) throw new Error(n); return await r.json(); }
+  catch (e) { if (opcional) return null; throw e; }
+}
+async function carregar() {
+  D.grade = await json("grade.json");
+  const [dhw, ssta, sst, baa, anual, sitios, area, base, recifes, costa] = await Promise.all([
+    bin("dhw.bin"), bin("ssta.bin"), bin("sst.bin"), bin("baa.bin"), bin("dhw_max_anual.bin"),
+    json("sitios.json"), json("area.json"), json("base.geojson", true), json("recifes.geojson", true), json("costa.geojson", true)
+  ]);
+  Object.assign(D, { dhw, ssta, sst, baa, anual, sitios, area, base, recifes, costa });
+  D.N = D.grade.n_lat * D.grade.n_lon;
+  D.oceano = Uint8Array.from(D.grade.oceano, (c) => c === "1" ? 1 : 0);
+}
+
+/* ---------- mapa ---------- */
+let mapa, overlay, canvas, ctx, imgData, destaque;
+function montarMapa() {
+  const L0 = D.grade.limites;
+  mapa = L.map("mapa", {
+    crs: L.CRS.EPSG4326, zoomControl: false, zoomSnap: 0.25, attributionControl: true,
+    maxBounds: [[L0[0][0] - 1.5, L0[0][1] - 2], [L0[1][0] + 1.5, L0[1][1] + 2]], maxBoundsViscosity: 0.7
+  });
+  mapa.attributionControl.setPrefix(false).addAttribution(CONFIG.atribuicao);
+  L.control.zoom({ position: "bottomright" }).addTo(mapa);
+  for (const [n, z] of [["base", 340], ["raster", 350], ["terra", 400], ["divisas", 410], ["recifes", 420], ["rotulos", 430], ["sitios", 450]]) {
+    mapa.createPane(n).style.zIndex = z;
+  }
+  mapa.getPane("rotulos").style.pointerEvents = "none";
+  mapa.fitBounds(L0, innerWidth > 720
+    ? { paddingTopLeft: [innerWidth > 1100 ? 360 : 320, 10], paddingBottomRight: [10, 90] }
+    : { paddingTopLeft: [6, 64], paddingBottomRight: [6, 120] });
+
+  canvas = document.createElement("canvas");
+  canvas.width = D.grade.n_lon; canvas.height = D.grade.n_lat;
+  ctx = canvas.getContext("2d"); imgData = ctx.createImageData(canvas.width, canvas.height);
+  overlay = L.imageOverlay(canvas.toDataURL(), L0, { pane: "raster", className: "raster suave", interactive: false }).addTo(mapa);
+
+  if (D.base) {
+    // Natural Earth: terra fora da área de dados (abaixo do raster, sem contorno)
+    L.geoJSON(D.base, {
+      pane: "base", filter: (f) => f.properties.tipo === "terra", interactive: false,
+      style: { stroke: false, fillColor: getVar("--terra"), fillOpacity: 1 }
+    }).addTo(mapa);
+    if (!D.costa) {
+      L.geoJSON(D.base, { pane: "terra", filter: (f) => f.properties.tipo === "terra", interactive: false,
+        style: { color: getVar("--terra-borda"), weight: 0.8, fill: false } }).addTo(mapa);
+    }
+    L.geoJSON(D.base, {
+      pane: "divisas", filter: (f) => f.properties.tipo === "estado", interactive: false,
+      style: { color: getVar("--terra-borda"), weight: 0.8, dashArray: "3 3", fill: false }
+    }).addTo(mapa);
+  }
+  if (D.costa) {
+    // linha de costa de 100 m (Hansen/GEE) sobre o raster: esconde os pixels mistos da borda
+    L.geoJSON(D.costa, { pane: "terra", interactive: false,
+      style: { stroke: false, fillColor: getVar("--terra"), fillOpacity: 1 } }).addTo(mapa);
+  }
+  for (const c of CONFIG.cidades) {
+    L.marker([c.lat, c.lon], { pane: "rotulos", interactive: false,
+      icon: L.divIcon({ className: "cidade", html: c.nome, iconSize: null, iconAnchor: [-2, 6] }) }).addTo(mapa);
+  }
+  camadas.setores = L.layerGroup();
+  for (const s of CONFIG.setores) {
+    if (s.nome !== "Norte") {
+      L.polyline([[s.latN, L0[0][1]], [s.latN, L0[1][1]]], { pane: "divisas", color: getVar("--texto"), weight: 1, opacity: 0.45, dashArray: "6 6", interactive: false }).addTo(camadas.setores);
+    }
+    L.marker([(s.latN + s.latS) / 2, L0[1][1] - 0.05], { pane: "rotulos", interactive: false,
+      icon: L.divIcon({ className: "setor", html: s.nome, iconSize: null, iconAnchor: [48, 6] }) }).addTo(camadas.setores);
+  }
+  if (D.recifes) {
+    camadas.recifes = L.geoJSON(D.recifes, { pane: "recifes", interactive: false,
+      style: { color: CONFIG.corRecife, weight: 1, fillColor: CONFIG.corRecife, fillOpacity: 0.45 } });
+  }
+  camadas.sitios = L.layerGroup();
+  D.sitios.sitios.forEach((s, i) => {
+    L.circleMarker([s.lat, s.lon], { pane: "sitios", radius: 5.5, color: "#0a1820", weight: 2,
+        fillColor: CONFIG.corSitio, fillOpacity: s.aproximado ? 0.55 : 1 })
+      .bindTooltip(`${s.nome}${s.aproximado ? " (≈)" : ""}`, { direction: "right", offset: [8, 0] })
+      .on("click", (e) => { L.DomEvent.stopPropagation(e); selecionarSitio(i, false); })
+      .addTo(camadas.sitios);
+  });
+  aplicarSobreposicoes();
+
+  mapa.on("click", (e) => selecionarPixel(e.latlng));
+  mapa.on("mousemove", (e) => leitura(e));
+  mapa.on("mouseout", () => { $("leitura").hidden = true; });
+}
+const camadas = {};
+function getVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+function indicePixel(lat, lon) {
+  const g = D.grade;
+  const i = Math.floor((g.lat_norte + g.passo_graus / 2 - lat) / g.passo_graus);
+  const j = Math.floor((lon - (g.lon_oeste - g.passo_graus / 2)) / g.passo_graus);
+  if (i < 0 || j < 0 || i >= g.n_lat || j >= g.n_lon) return null;
+  return { i, j, k: i * g.n_lon + j };
+}
+function centroPixel(i, j) {
+  const g = D.grade; return [g.lat_norte - i * g.passo_graus, g.lon_oeste + j * g.passo_graus];
+}
+
+/* ---------- desenho do raster ---------- */
+function fonteAtual() {
+  if (estado.modo === "anual") return { nome: "dhw", bytes: D.anual, base: estado.ano * D.N, cod: "anual" };
+  return { nome: estado.var, bytes: D[estado.var], base: estado.quadro * D.N, cod: estado.var };
+}
+/* opacidade nas bordas do recorte: esmaece a borda leste (mar aberto) e as bordas norte e sul */
+let alfaBorda = null;
+function calcularAlfaBorda() {
+  const g = D.grade, nL = g.n_lat, nO = g.n_lon, a = new Float32Array(nL * nO);
+  const suave = (d, n) => { const t = Math.min(1, Math.max(0, d / n)); return t * t * (3 - 2 * t); };
+  for (let i = 0; i < nL; i++) for (let j = 0; j < nO; j++) {
+    a[i * nO + j] = suave(nO - 1 - j + 0.5, 24) * suave(i + 0.5, 8) * suave(nL - 1 - i + 0.5, 8);
+  }
+  alfaBorda = a;
+}
+function desenhar() {
+  if (!alfaBorda) calcularAlfaBorda();
+  const f = fonteAtual(), px = imgData.data;
+  for (let k = 0; k < D.N; k++) {
+    const b = f.bytes[f.base + k], o = k * 4;
+    if (!D.oceano[k] || b === 255) { px[o + 3] = 0; continue; }
+    const [r, g, bl] = corDe(f.nome, valorFonte(f, k));
+    px[o] = r; px[o + 1] = g; px[o + 2] = bl; px[o + 3] = Math.round(235 * alfaBorda[k]);
+  }
+  ctx.putImageData(imgData, 0, 0);
+  overlay.setUrl(canvas.toDataURL());
+  atualizarData(); atualizarDetalhe(); marcarGraficos();
+}
+
+/* ---------- linha do tempo ---------- */
+function configurarTempo() {
+  const cur = $("cursor"), anos = $("anos");
+  anos.innerHTML = "";
+  if (estado.modo === "semanal") {
+    const ds = D.grade.datas; cur.max = ds.length - 1; cur.value = estado.quadro;
+    ds.forEach((d, i) => {
+      if (i === 0 || d.slice(0, 4) !== ds[i - 1].slice(0, 4)) {
+        const s = document.createElement("span"); s.textContent = d.slice(0, 4);
+        s.style.left = `${(i / (ds.length - 1)) * 100}%`; if (i === 0) s.style.transform = "none"; anos.appendChild(s);
+      }
+    });
+  } else {
+    const a = D.grade.anos_max; cur.max = a.length - 1; cur.value = estado.ano;
+    const passo = a.length > 12 ? 5 : 1;
+    a.forEach((y, i) => {
+      if (i === 0 || i === a.length - 1 || y % passo === 0) {
+        const s = document.createElement("span"); s.textContent = y;
+        s.style.left = `${a.length > 1 ? (i / (a.length - 1)) * 100 : 0}%`;
+        if (i === 0) s.style.transform = "none"; if (i === a.length - 1 && a.length > 1) s.style.transform = "translateX(-100%)";
+        anos.appendChild(s);
+      }
+    });
+  }
+}
+function atualizarData() {
+  if (estado.modo === "semanal") {
+    $("data-d").textContent = dataBR(D.grade.datas[estado.quadro]);
+    $("data-m").textContent = `Semana ${estado.quadro + 1} de ${D.grade.datas.length} · ${CONFIG.variaveis[estado.var].legenda.split(" (")[0]}`;
+  } else {
+    $("data-d").textContent = String(D.grade.anos_max[estado.ano]);
+    $("data-m").textContent = "DHW máximo do ano em cada pixel";
+  }
+}
+function passo(dir) {
+  const cur = $("cursor"), max = +cur.max;
+  let v = +cur.value + dir; if (v > max) v = 0; if (v < 0) v = max;
+  cur.value = v; aoMoverCursor();
+}
+function aoMoverCursor() {
+  const v = +$("cursor").value;
+  if (estado.modo === "semanal") estado.quadro = v; else estado.ano = v;
+  desenhar();
+}
+function alternarPlay() {
+  if (estado.tocando) { clearInterval(estado.tocando); estado.tocando = null; $("play").textContent = "▶"; $("play").setAttribute("aria-label", "Animar"); return; }
+  estado.tocando = setInterval(() => passo(1), estado.modo === "anual" ? 700 : CONFIG.intervaloAnimacaoMs);
+  $("play").textContent = "❚❚"; $("play").setAttribute("aria-label", "Pausar");
+}
+
+/* ---------- legenda ---------- */
+function montarLegenda() {
+  const nome = estado.modo === "anual" ? "dhw" : estado.var, c = CONFIG.variaveis[nome], el = $("legenda");
+  let h = `<div class="titulo">${estado.modo === "anual" ? "DHW máximo anual (°C-semana)" : c.legenda}</div>`;
+  if (c.tipo === "categorias") {
+    h += `<div class="categorias">${c.categorias.map((k) => `<div><i style="background:${k.cor}"></i>${k.nome}</div>`).join("")}</div>`;
+  } else if (c.tipo === "degraus") {
+    h += `<div class="escala">${c.cores.map((x) => `<span style="background:${x}"></span>`).join("")}</div>`;
+    h += `<div class="escala-rotulos">${c.limites.map((x) => `<span>${x}</span>`).join("")}<span>+</span></div>`;
+  } else {
+    const p = c.paradas, n = 24, a = p[0][0], b = p[p.length - 1][0];
+    h += `<div class="escala">${Array.from({ length: n }, (_, i) => { const [r, g, bl] = corDe(nome, a + (b - a) * i / (n - 1)); return `<span style="background:rgb(${r},${g},${bl})"></span>`; }).join("")}</div>`;
+    h += `<div class="escala-rotulos">${p.map((x) => `<span>${x[0] > 0 && nome === "ssta" ? "+" : ""}${x[0]}</span>`).join("")}</div>`;
+  }
+  el.innerHTML = h;
+}
+
+/* ---------- controles ---------- */
+function montarControles() {
+  const box = $("chips-var");
+  for (const [k, c] of Object.entries(CONFIG.variaveis)) {
+    const b = document.createElement("button"); b.className = "chip"; b.dataset.var = k; b.textContent = c.nome;
+    b.setAttribute("aria-pressed", k === estado.var ? "true" : "false");
+    b.onclick = () => { estado.var = k; if (estado.modo === "anual") definirModo("semanal"); marcarChips(); montarLegenda(); desenhar(); };
+    box.appendChild(b);
+  }
+  const sob = $("chips-sobre");
+  const itens = [["sitios", "Complexos recifais", CONFIG.corSitio], ["setores", "Setores", getVar("--texto-2")]];
+  if (D.recifes) itens.unshift(["recifes", "Recifes mapeados", CONFIG.corRecife]);
+  for (const [k, nome, cor] of itens) {
+    const b = document.createElement("button"); b.className = "chip sub"; b.dataset.sobre = k;
+    b.innerHTML = `<span class="ponto" style="background:${cor}"></span>${nome}`;
+    b.setAttribute("aria-pressed", estado.sobre[k] ? "true" : "false");
+    b.onclick = () => { estado.sobre[k] = !estado.sobre[k]; b.setAttribute("aria-pressed", estado.sobre[k] ? "true" : "false"); aplicarSobreposicoes(); };
+    sob.appendChild(b);
+  }
+  $("modo-semanal").onclick = () => definirModo("semanal");
+  $("modo-anual").onclick = () => definirModo("anual");
+  $("suavizar").onclick = () => {
+    estado.suave = !estado.suave; $("suavizar").setAttribute("aria-pressed", estado.suave ? "true" : "false");
+    overlay.getElement().classList.toggle("suave", estado.suave);
+  };
+  $("cursor").addEventListener("input", aoMoverCursor);
+  $("play").onclick = alternarPlay;
+  $("btn-area").onclick = () => mostrarArea($("painel-area").hidden);
+  $("fechar-area").onclick = () => mostrarArea(false);
+  $("fechar-detalhe").onclick = fecharDetalhe;
+  $("rec-ant").onclick = () => irParaSitio(-1);
+  $("rec-prox").onclick = () => irParaSitio(1);
+  $("rec-nome").onclick = () => mostrarListaRecifes($("lista-recifes").hidden);
+  montarListaRecifes();
+  $("det-ant").onclick = () => irParaSitio(-1);
+  $("det-prox").onclick = () => irParaSitio(1);
+  $("recolher").onclick = () => recolherTopo(!$("topo").classList.contains("recolhido"));
+  if (ehCelular()) recolherTopo(true);
+  document.querySelectorAll("[data-limiar]").forEach((b) => b.onclick = () => {
+    estado.limiarArea = +b.dataset.limiar;
+    document.querySelectorAll("[data-limiar]").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    graficoArea();
+  });
+  $("abrir-sobre").onclick = () => { $("sobre").hidden = false; $("fechar-sobre").focus(); };
+  $("fechar-sobre").onclick = () => { $("sobre").hidden = true; };
+  $("sobre").addEventListener("click", (e) => { if (e.target === $("sobre")) $("sobre").hidden = true; });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (!$("lista-recifes").hidden) { mostrarListaRecifes(false); $("rec-nome").focus(); return; }
+      $("sobre").hidden = true; fecharDetalhe();
+    }
+    if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+    if (e.key === "ArrowRight") passo(1); if (e.key === "ArrowLeft") passo(-1); if (e.key === " ") { e.preventDefault(); alternarPlay(); }
+    if (e.key === "PageDown" || e.key === "]") irParaSitio(1); if (e.key === "PageUp" || e.key === "[") irParaSitio(-1);
+  });
+}
+function marcarChips() {
+  document.querySelectorAll("#chips-var .chip").forEach((b) => b.setAttribute("aria-pressed", estado.modo === "semanal" && b.dataset.var === estado.var ? "true" : "false"));
+}
+function definirModo(m) {
+  if (estado.tocando) alternarPlay();
+  estado.modo = m;
+  $("modo-semanal").setAttribute("aria-pressed", m === "semanal" ? "true" : "false");
+  $("modo-anual").setAttribute("aria-pressed", m === "anual" ? "true" : "false");
+  if (m === "anual") estado.ano = Math.max(0, D.grade.anos_max.indexOf(+D.grade.datas[estado.quadro].slice(0, 4)));
+  marcarChips(); configurarTempo(); montarLegenda(); desenhar();
+}
+function aplicarSobreposicoes() {
+  for (const k of ["recifes", "sitios", "setores"]) {
+    if (!camadas[k]) continue;
+    if (estado.sobre[k]) camadas[k].addTo(mapa); else camadas[k].remove();
+  }
+}
+function mostrarArea(v) {
+  $("painel-area").hidden = !v; $("btn-area").setAttribute("aria-expanded", v ? "true" : "false");
+  if (v) { fecharDetalhe(); graficoArea(); if (ehCelular()) recolherTopo(true); }
+  marcarPainel();
+}
+function recolherTopo(r) {
+  $("topo").classList.toggle("recolhido", r);
+  $("recolher").setAttribute("aria-expanded", r ? "false" : "true");
+}
+/* navegação entre os complexos recifais (ordem norte -> sul) */
+function ordemSitios() {
+  return D.sitios.sitios.map((s, i) => [s.lat, i]).sort((a, b) => b[0] - a[0]).map((x) => x[1]);
+}
+function irParaSitio(dir) {
+  const ordem = ordemSitios();
+  let pos = estado.selecao && estado.selecao.tipo === "sitio" ? ordem.indexOf(estado.selecao.i) : -1;
+  pos = pos < 0 ? (dir > 0 ? 0 : ordem.length - 1) : (pos + dir + ordem.length) % ordem.length;
+  selecionarSitio(ordem[pos], true);
+}
+/* menu retrátil com todos os complexos recifais, agrupados por região */
+function maxAno(s, ano) {
+  const v = s.dhw.filter((_, j) => D.sitios.datas[j].startsWith(String(ano))).filter((x) => x != null);
+  return v.length ? Math.max(...v) : null;
+}
+function seloDHW(v) {
+  if (v == null) return `<span style="background:#33454c;color:#e4edef">—</span>`;
+  const [r, g, b] = corDe("dhw", v), claro = (r * 299 + g * 587 + b * 114) / 1000 > 140;
+  return `<span style="background:rgb(${r},${g},${b});color:${claro ? "#0a1820" : "#fff"}">${fmt(v, 1)}</span>`;
+}
+function montarListaRecifes() {
+  const el = $("lista-recifes"), anos = D.grade.anos_max.slice(-2);
+  let h = `<div class="lista-cab"><span>${D.sitios.sitios.length} complexos, de norte a sul</span>
+    <span class="cab-anos" title="DHW máximo do ano, em °C-semana">DHW máx. ${anos.map((a) => `<b>${a}</b>`).join("")}</span></div>`, regiao = null;
+  for (const i of ordemSitios()) {
+    const s = D.sitios.sitios[i];
+    if (s.regiao !== regiao) { regiao = s.regiao; h += `<div class="grupo">${regiao}</div>`; }
+    h += `<button class="item-recife" role="option" aria-selected="false" data-sitio="${i}">
+      <span class="n">${s.nome}${s.aproximado ? '<small title="coordenada aproximada">≈</small>' : ""}</span>
+      <span class="v" title="DHW máximo: ${anos.map((a) => `${a} = ${fmt(maxAno(s, a), 1)}`).join(", ")} °C-semana">${anos.map((a) => seloDHW(maxAno(s, a))).join("")}</span></button>`;
+  }
+  h += `<div class="lista-legenda">Os números são o DHW máximo atingido em cada ano (°C-semana), na cor da legenda do mapa. Alerta 1 a partir de 4, Alerta 2 a partir de 8 e Alertas 3, 4 e 5 a partir de 12, 16 e 20. ≈ coordenada aproximada.</div>`;
+  el.innerHTML = h;
+  el.querySelectorAll(".item-recife").forEach((b) => b.onclick = () => {
+    mostrarListaRecifes(false); selecionarSitio(+b.dataset.sitio, true);
+  });
+}
+function mostrarListaRecifes(v) {
+  $("lista-recifes").hidden = !v; $("rec-nome").setAttribute("aria-expanded", v ? "true" : "false");
+  if (v) {
+    const atual = $("lista-recifes").querySelector('[aria-selected="true"]') || $("lista-recifes").querySelector(".item-recife");
+    if (atual) { atual.scrollIntoView({ block: "nearest" }); atual.focus({ preventScroll: true }); }
+  }
+}
+function centralizar(lat, lon) {
+  const z = Math.max(mapa.getZoom(), 9);
+  let alvo = L.latLng(lat, lon);
+  const pt = mapa.project(alvo, z);
+  // desloca o centro para o marcador não ficar sob os painéis
+  if (ehCelular()) pt.y += Math.min(innerHeight * 0.22, 200);
+  else pt.x += ($("painel-detalhe").offsetWidth || 400) / 2 - ($("topo").offsetWidth || 340) / 2;
+  alvo = mapa.unproject(pt, z);
+  mapa.flyTo(alvo, z, { duration: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.7 });
+}
+
+/* ---------- leitura sob o cursor ---------- */
+function leitura(e) {
+  const p = indicePixel(e.latlng.lat, e.latlng.lng), el = $("leitura");
+  if (!p || !D.oceano[p.k]) { el.hidden = true; return; }
+  const f = fonteAtual(), v = valorFonte(f, p.k);
+  if (Number.isNaN(v)) { el.hidden = true; return; }
+  const c = CONFIG.variaveis[f.nome];
+  el.textContent = c.tipo === "categorias" ? c.categorias.find((x) => x.v === Math.round(v))?.nome : `${fmt(v, c.casas)} ${c.unidade}`;
+  el.style.left = `${e.containerPoint.x}px`; el.style.top = `${e.containerPoint.y}px`; el.hidden = false;
+}
+
+/* ---------- gráficos ---------- */
+Chart.defaults.color = "#95aab0";
+Chart.defaults.font.family = '"IBM Plex Mono", ui-monospace, monospace';
+Chart.defaults.font.size = 10;
+Chart.defaults.borderColor = "rgba(150,185,195,0.14)";
+const marcador = {
+  id: "marcador",
+  afterDatasetsDraw(ch, _a, op) {
+    const { ctx: c, chartArea: a, scales } = ch;
+    if (op.limiares && scales.y) {
+      c.save(); c.setLineDash([4, 4]); c.strokeStyle = "rgba(228,237,239,0.45)"; c.lineWidth = 1;
+      for (const t of op.limiares) { const y = scales.y.getPixelForValue(t); if (y > a.top && y < a.bottom) { c.beginPath(); c.moveTo(a.left, y); c.lineTo(a.right, y); c.stroke(); c.fillStyle = "rgba(228,237,239,0.6)"; c.fillText(`DHW ${t}`, a.left + 3, y - 3); } }
+      c.restore();
+    }
+    if (op.indice != null && op.indice >= 0) {
+      const x = scales.x.getPixelForValue(op.indice);
+      c.save(); c.strokeStyle = "#ffd166"; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x, a.top); c.lineTo(x, a.bottom); c.stroke(); c.restore();
+    }
+  }
+};
+Chart.register(marcador);
+const eixoAnos = (labels) => ({
+  ticks: { autoSkip: false, maxRotation: 0, callback: (v, i) => (i === 0 || labels[i].slice(0, 4) !== labels[i - 1].slice(0, 4)) ? labels[i].slice(0, 4) : null },
+  grid: { display: false }
+});
+let gArea, gSerie, gAnual;
+function graficoArea() {
+  const A = D.area, t = estado.limiarArea, ds = CONFIG.setores.map((s) => ({ label: s.nome, data: A[`${s.nome}_${t}`], borderColor: s.cor, borderWidth: 1.5, pointRadius: 0, tension: 0.1 }));
+  ds.push({ label: "Total", data: A[`Total_${t}`], borderColor: "#e4edef", borderDash: [4, 3], borderWidth: 1, pointRadius: 0 });
+  const opc = {
+    responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: "index", intersect: false },
+    scales: { x: eixoAnos(A.datas), y: { min: 0, max: 100, ticks: { callback: (v) => `${v}%`, stepSize: 25 } } },
+    plugins: { legend: { labels: { boxWidth: 10, boxHeight: 2 } }, tooltip: { callbacks: { title: (it) => dataBR(A.datas[it[0].dataIndex]), label: (it) => ` ${it.dataset.label}: ${fmt(it.raw, 1)}%` } }, marcador: { indice: indiceDiario() } }
+  };
+  if (gArea) gArea.destroy();
+  gArea = new Chart($("graf-area"), { type: "line", data: { labels: A.datas, datasets: ds }, options: opc });
+}
+function indiceDiario() {
+  if (estado.modo !== "semanal") return -1;
+  return D.area.datas.indexOf(D.grade.datas[estado.quadro]);
+}
+function marcarGraficos() {
+  if (gArea && !$("painel-area").hidden) { gArea.options.plugins.marcador.indice = indiceDiario(); gArea.update("none"); }
+  if (gSerie && estado.selecao) {
+    gSerie.options.plugins.marcador.indice = estado.modo !== "semanal" ? -1 : (estado.selecao.tipo === "pixel" ? estado.quadro : D.sitios.datas.indexOf(D.grade.datas[estado.quadro]));
+    gSerie.update("none");
+  }
+  if (gAnual && estado.selecao) {
+    gAnual.data.datasets[0].backgroundColor = gAnual.data.labels.map((y, i) => (estado.modo === "anual" ? i === estado.ano : String(y) === D.grade.datas[estado.quadro].slice(0, 4)) ? "#ffd166" : gAnual._cores[i]);
+    gAnual.update("none");
+  }
+}
+
+/* ---------- painel de detalhe ---------- */
+function rotuloAlerta(v) { const k = CONFIG.variaveis.baa.categorias.find((x) => x.v === Math.round(v)); return k ? `<span class="selo" style="background:${k.cor}">${k.nome.split(" (")[0]}</span>` : "—"; }
+function cartaoValores(dhw, baa, ssta, sst) {
+  $("det-valores").innerHTML = `
+    <div class="valor"><div class="r">DHW</div><div class="v">${fmt(dhw, 1)}</div><div class="u">°C-semana</div></div>
+    <div class="valor"><div class="r">Alerta</div><div class="v">${Number.isNaN(baa) ? "—" : rotuloAlerta(baa)}</div></div>
+    <div class="valor"><div class="r">SSTA</div><div class="v">${Number.isNaN(ssta) ? "—" : (ssta > 0 ? "+" : "") + fmt(ssta, 2)}</div><div class="u">°C</div></div>
+    <div class="valor"><div class="r">SST</div><div class="v">${fmt(sst, 2)}</div><div class="u">°C</div></div>`;
+}
+function ehCelular() { return matchMedia("(max-width: 720px)").matches; }
+function marcarPainel() { document.body.classList.toggle("painel-aberto", !$("painel-detalhe").hidden || !$("painel-area").hidden); }
+function abrirDetalhe() {
+  mostrarArea(false); $("painel-detalhe").hidden = false;
+  if (ehCelular()) recolherTopo(true);
+  marcarPainel();
+}
+function fecharDetalhe() {
+  $("painel-detalhe").hidden = true; estado.selecao = null; marcarPainel();
+  if (destaque) { destaque.remove(); destaque = null; }
+}
+function serieAnualPixel(k) { return D.grade.anos_max.map((_, a) => { const v = decod("anual", D.anual[a * D.N + k]); return Number.isNaN(v) ? null : +v.toFixed(2); }); }
+function graficoSerie(labels, dhw, ssta, indice) {
+  if (gSerie) gSerie.destroy();
+  gSerie = new Chart($("graf-serie"), {
+    type: "line",
+    data: { labels, datasets: [
+      { label: "DHW (°C-semana)", data: dhw, borderColor: "#ff8a3d", backgroundColor: "rgba(255,138,61,0.22)", fill: true, borderWidth: 1.6, pointRadius: 0, yAxisID: "y" },
+      { label: "SSTA (°C)", data: ssta, borderColor: "#6fb7d8", borderWidth: 1, pointRadius: 0, yAxisID: "y2" }
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: "index", intersect: false },
+      scales: {
+        x: eixoAnos(labels),
+        y: { min: 0, suggestedMax: 10, title: { display: true, text: "DHW" } },
+        y2: { position: "right", suggestedMin: -1, suggestedMax: 3, grid: { display: false }, title: { display: true, text: "SSTA" } }
+      },
+      plugins: { legend: { labels: { boxWidth: 10, boxHeight: 2 } },
+        tooltip: { callbacks: { title: (it) => dataBR(labels[it[0].dataIndex]), label: (it) => ` ${it.dataset.label}: ${fmt(it.raw, 2)}` } },
+        marcador: { limiares: CONFIG.limiaresDHW, indice } }
+    }
+  });
+}
+function graficoAnual(valores) {
+  const anos = D.grade.anos_max, cores = valores.map((v) => v == null ? "#333" : `rgb(${corDe("dhw", v).join(",")})`);
+  if (gAnual) gAnual.destroy();
+  gAnual = new Chart($("graf-anual"), {
+    type: "bar",
+    data: { labels: anos, datasets: [{ data: valores, backgroundColor: cores, borderWidth: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      scales: { x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true } }, y: { min: 0, suggestedMax: 10 } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (it) => ` DHW máximo: ${fmt(it.raw, 1)}` } }, marcador: { limiares: CONFIG.limiaresDHW } }
+    }
+  });
+  gAnual._cores = cores;
+}
+function setorDe(lat) { const s = CONFIG.setores.find((x) => lat <= x.latN && lat > x.latS); return s ? s.nome : "fora dos setores"; }
+function coordBR(lat, lon) { return `${fmt(Math.abs(lat), 3)}° S · ${fmt(Math.abs(lon), 3)}° O`; }
+
+function selecionarPixel(latlng) {
+  const p = indicePixel(latlng.lat, latlng.lng);
+  if (!p || !D.oceano[p.k]) return;
+  estado.selecao = { tipo: "pixel", ...p };
+  $("det-nav").hidden = true;
+  const [la, lo] = centroPixel(p.i, p.j), h = D.grade.passo_graus / 2;
+  if (destaque) destaque.remove();
+  destaque = L.rectangle([[la - h, lo - h], [la + h, lo + h]], { pane: "recifes", color: "#ffd166", weight: 2, fill: false, interactive: false }).addTo(mapa);
+  const F = D.grade.datas.length, ser = (nome) => Array.from({ length: F }, (_, f) => { const v = decod(nome, D[nome][f * D.N + p.k]); return Number.isNaN(v) ? null : +v.toFixed(2); });
+  $("det-titulo").textContent = "Pixel de 5 km";
+  $("det-sub").textContent = `${coordBR(la, lo)} · setor ${setorDe(la)}`;
+  $("det-rotulo-serie").textContent = "Série semanal 2023–2025";
+  $("det-rotulo-anual").textContent = `DHW máximo por ano (${D.grade.anos_max[0]}–${D.grade.anos_max.at(-1)})`;
+  $("det-nota").textContent = "Valores do pixel de ~5,5 km do NOAA Coral Reef Watch. As linhas tracejadas marcam os limiares dos Alertas 1 a 5 (4, 8, 12, 16 e 20 °C-semana).";
+  graficoSerie(D.grade.datas, ser("dhw"), ser("ssta"), estado.quadro);
+  graficoAnual(serieAnualPixel(p.k));
+  abrirDetalhe(); atualizarDetalhe(); marcarGraficos();
+}
+function selecionarSitio(i, voar) {
+  const s = D.sitios.sitios[i], p = indicePixel(s.lat, s.lon);
+  const ordem = ordemSitios(), pos = ordem.indexOf(i);
+  $("det-nav").hidden = false;
+  $("det-pos").textContent = `${pos + 1} de ${ordem.length} · norte → sul`;
+  $("rec-nome").textContent = s.nome;
+  document.querySelectorAll(".item-recife").forEach((b) => b.setAttribute("aria-selected", +b.dataset.sitio === i ? "true" : "false"));
+  estado.selecao = { tipo: "sitio", i, k: p ? p.k : null };
+  if (destaque) { destaque.remove(); destaque = null; }
+  $("det-titulo").textContent = s.nome;
+  $("det-sub").textContent = `${s.regiao} · ${s.aproximado ? "≈ " : ""}${coordBR(s.lat, s.lon)} · setor ${setorDe(s.lat)}`;
+  $("det-rotulo-serie").textContent = "Série diária 2023–2025";
+  $("det-rotulo-anual").textContent = "DHW máximo por ano (pixel do recife)";
+  $("det-nota").textContent = `Média dos pixels oceânicos válidos em torno do complexo recifal (janela de 0,05° a 0,2°). Coordenada: ${s.fonte}.`;
+  graficoSerie(D.sitios.datas, s.dhw, s.ssta, D.sitios.datas.indexOf(D.grade.datas[estado.quadro]));
+  const anos = D.grade.anos_max, anual = anos.map((y) => {
+    const vals = s.dhw.filter((_, j) => D.sitios.datas[j].startsWith(String(y))).filter((v) => v != null);
+    if (vals.length) return Math.max(...vals);
+    return p ? serieAnualPixel(p.k)[anos.indexOf(y)] : null;
+  });
+  graficoAnual(anual);
+  abrirDetalhe(); atualizarDetalhe(); marcarGraficos();
+  if (voar) centralizar(s.lat, s.lon);
+}
+function atualizarDetalhe() {
+  const s = estado.selecao; if (!s || $("painel-detalhe").hidden) return;
+  if (s.tipo === "pixel") {
+    const f = estado.quadro, v = (n) => decod(n, D[n][f * D.N + s.k]);
+    cartaoValores(v("dhw"), nivelAlerta(v("baa"), v("dhw")), v("ssta"), v("sst"));
+  } else {
+    const st = D.sitios.sitios[s.i], j = D.sitios.datas.indexOf(D.grade.datas[estado.quadro]);
+    const baa = s.k != null ? decod("baa", D.baa[estado.quadro * D.N + s.k]) : NaN;
+    cartaoValores(st.dhw[j] ?? NaN, nivelAlerta(baa, st.dhw[j] ?? NaN), st.ssta[j] ?? NaN, st.sst[j] ?? NaN);
+  }
+}
+
+/* ---------- início ---------- */
+(async function iniciar() {
+  try {
+    await carregar();
+  } catch (e) {
+    $("aviso").textContent = "Não foi possível carregar os dados do mapa. Verifique se a pasta data/ está ao lado desta página e recarregue.";
+    return;
+  }
+  const alvo = D.grade.datas.findIndex((d) => d >= CONFIG.quadroInicial);
+  estado.quadro = alvo >= 0 ? alvo : 0;
+  montarMapa(); montarControles(); configurarTempo(); montarLegenda(); desenhar();
+  $("aviso").hidden = true;
+})();
+</script>
